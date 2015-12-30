@@ -1,0 +1,102 @@
+#Importing what is needed to run the code
+import math
+import random
+import sys 
+
+
+
+#Defining functions
+def generation():
+    global H
+    global D
+    global T
+    if gen0 <= (T1/100): # gen0 becomes a T
+        ac1 = random.random()
+        if ac1 <= (T1/100): # loves a T
+            gen1 = random.random()
+            if gen1 <= 0.5: # baby is T
+                T = T+1
+            elif gen1 > 0.5 and gen1 < 0.75: # baby is D
+                 D = D+1
+            else:
+                 H = H+1 # baby is H
+        elif ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a D
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                    T = T+1 # baby is a T
+            else:
+                     D = D+1 # baby is a D
+        else: # loves a H
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                T = T+1 # baby is T
+            else:
+                H = H+1 # baby is a H
+    elif gen0 > (T1/100) and gen0 <= ((T1+D1)/100): # gen 0 is D
+            ac1 = random.random()
+            if ac1 <= (T1/100): # loves a T
+                gen1 = random.random()
+                if gen1 <=0.5:
+                    T = T+1 # baby is T
+                else:
+                    D = D+1 # baby is D
+            elif ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a D
+                    gen1 = random.random()
+                    D = D+1 # baby is D
+            else:
+                    T = T+1 # loves, a T, baby a T
+    else:  # person is H
+        ac1 = random.random()
+        if ac1 <= (T1/100): # loves a T
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                T = T+1 # baby is a T
+            else:
+                H = H+1 # baby is a H
+        else:
+            if ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a H
+                gen1 = random.random()
+                T = T+1 #baby is a T
+            else:
+                H = H+1
+    
+#Declaring Variables
+T=0
+D=0
+H=0
+n = input('Population Totale: ')
+T1 = input('% de la pop. qui a le trait')
+D1 = input('% de la pop. qui est atteint')
+H1 = input('% de la pop. qui est sain')
+
+#Turning everything into floater & integers
+n = int(n)
+T1 = float(T1)
+D1 = float(D1)
+H1 = float(H1)
+
+
+#Starting the code
+for x in range (1, n):
+    gen0 = random.random()
+    generation()
+            
+print "Personnes T"
+print T
+print " "
+print "Personnes D"
+print D
+print " "
+print "Personnes H"
+print H
+print " "
+                
+                
+            
+                    
+                
+            
+                
+                    
+                
+    
