@@ -1,0 +1,203 @@
+import math
+import sys
+import random
+
+"""
+LISTE DE VARIABLES
+"""
+
+#Variables interchangeables:
+totale_pop_gen0 = 100
+pourcentage_femme = 0.508
+pourcentage_femme_bebe = 0.524
+T1 = 0.15
+D1 = 0.5
+H1 = 0.80
+nombre_de_generation = 4
+
+#Variables fixe:
+pourcentage_pop_totale_bebe = (pourcentage_femme * pourcentage_femme_bebe)*2
+pourcentage_pop_totale_nonbebe = 1 - pourcentage_pop_totale_bebe
+T = 0
+D = 0
+H = 0
+compteur_generation  = 0
+population_actuelle = 0
+
+#Lists
+ListT = []
+ListD = []
+ListH = []
+
+ListT_nonbebe = []
+ListD_nonbebe = []
+ListH_nonbebe = []
+
+ListTTotal = []
+ListDTotal = []
+ListHTotal = []
+
+
+"""
+FONCTIONS
+"""
+
+#Utiliser pour calculer le nombre de personnes qui auront des enfants
+def print_population(x):
+    print (" ")
+    print ("# de T dans generation ",x,"= ",ListTTotal[len(ListTTotal)-1]),
+    print (" ")
+    print ("# de D dans generation ",x,"= ",ListDTotal[len(ListDTotal)-1]),
+    print (" ")
+    print ("# de H dans generation ",x,"= ",ListHTotal[len(ListHTotal)-1]),
+    print (" ")
+
+def calcul_population(b,c,d):
+    global T1
+    global D1
+    global H1
+    a = (b * c)			#population_bebe = totale_pop_gen0 * %_pop_totale_bebe
+    e = (b * d)			#population_non_bebe = " * %_pop_totale_nonbebe
+    ListT_nonbebe.append(e*T1)
+    ListD_nonbebe.append(e*D1)
+    ListH_nonbebe.append(e*H1)
+    return a
+    
+    
+
+def generation_order(a):
+    full_generation(a)
+    generation_rotation()
+    master_listes()
+          
+
+def master_listes():
+    ListTTotal = (ListT[len(ListT)-1] + ListT_nonbebe[len(ListT_nonbebe)-1])
+    ListDTotal = (ListD[len(ListD)-1] + ListD_nonbebe[len(ListD_nonbebe)-1])
+    ListHTotal = (ListH[len(ListH)-1] + ListH_nonbebe[len(ListH_nonbebe)-1])
+    
+    
+def generation_rotation():
+    global T
+    global D
+    global H
+    global T1
+    global D1
+    global H1
+    T = 0
+    D = 0
+    H = 0
+    T1 = (ListT[len(ListT)-1]/(ListT[len(ListT)-1] + ListD[len(ListD)-1] + ListH[len(ListH)-1]))
+    D1 = (ListD[len(ListT)-1]/(ListT[len(ListT)-1] + ListD[len(ListD)-1] + ListH[len(ListH)-1]))
+    H1 = (ListH[len(ListT)-1]/(ListT[len(ListT)-1] + ListD[len(ListD)-1] + ListH[len(ListH)-1]))
+
+def full_generation(n):
+    for x in range (int(n)):
+        generation()
+    ListT.append(T)
+    ListD.append(D)
+    ListH.append(H)
+    
+    
+def generation():
+    global T
+    global D
+    global H
+    global T1
+    global D1
+    gen0 = random.random()
+    if gen0 <= (T1/100): # gen0 becomes a T
+        ac1 = random.random()
+        if ac1 <= (T1/100): # loves a T
+            gen1 = random.random()
+            if gen1 <= 0.5: # baby is T
+                T += 1
+            elif gen1 > 0.5 and gen1 < 0.75: # baby is D
+                 D += 1
+            else:
+                 H += 1 # baby is H
+        elif ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a D
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                    T += 1 # baby is a T
+            else:
+                     D += 1 # baby is a D
+        else: # loves a H
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                T += 1 # baby is T
+            else:
+                H += 1 # baby is a H
+    elif gen0 > (T1/100) and gen0 <= ((T1+D1)/100): # gen 0 is D
+            ac1 = random.random()
+            if ac1 <= (T1/100): # loves a T
+                gen1 = random.random()
+                if gen1 <=0.5:
+                    T += 1 # baby is T
+                else:
+                    D += 1 # baby is D
+            elif ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a D
+                    gen1 = random.random()
+                    D += 1 # baby is D
+            else:
+                    T += 1 # loves, a T, baby a T
+    else:  # person is H
+        ac1 = random.random()
+        if ac1 <= (T1/100): # loves a T
+            gen1 = random.random()
+            if gen1 <= 0.5:
+                T += 1 # baby is a T
+            else:
+                H += 1 # baby is a H
+        else:
+            if ac1 > (T1/100) and ac1 <= ((T1+D1)/100): # loves a H
+                gen1 = random.random()
+                T += 1 #baby is a T
+            else:
+                H += 1
+    
+def main(x):
+    if x == 0: #La premiere generation 
+        a = calcul_population(totale_pop_gen0,pourcentage_pop_totale_bebe,pourcentage_pop_totale_nonbebe)
+        generation_order(a)
+        print_population(x)
+
+    
+    elif x%4: #Tous # de generation divisible par 4
+        population_actuelle = (ListTTotal[len(ListTTotal)-1] + ListDTotal[len(ListDTotal)-1] + ListHTotal [len(ListHTotal)-1])
+        a = calcul_population(population_actuelle,pourcentage_pop_totale_bebe,pourcentage_pop_totale_nonbebe)
+        ListT.pop(0)  #Juste avant la 4eme generation, enleve les premieres valeurs sur ListT,D,H, etc (personnes meurent)
+        ListD.pop(0)
+        ListH.pop(0)
+        ListTTotal.pop(0)
+        ListDTotal.pop(0)
+        ListHTotal.pop(0)
+        generation_order(a)
+        print_population(x)
+
+    
+    else: #N'importe quel autre generation
+        population_actuelle = (ListTTotal[len(ListTTotal)-1] + ListDTotal[len(ListDTotal)-1] + ListHTotal [len(ListHTotal)-1])
+        a = calcul_population(population_actuelle,pourcentage_pop_totale_bebe,pourcentage_pop_totale_nonbebe)
+        generation_order(a)
+        print_population(x)
+
+        
+        
+
+          
+          
+"""
+CODE
+"""
+          
+          
+for x in range (nombre_de_generation):
+    main(compteur_generation)
+    
+              
+    
+    
+    
+    
+    
